@@ -5,128 +5,170 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intern Dashboard | Arcana Learning</title>
   
-  <!-- Link to your main stylesheet for fonts -->
   <link rel="stylesheet" href="style.css">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="erbaum/stylesheet.css">
+
   <style>
+    /* --- Arcana Brand Palette & Typography --- */
+    :root {
+      --midnight-summit: #002c39;
+      --arcana-deep: #015061;
+      --aurora-green: #00c18e;
+      --frosted-mist: #fff7f7;
+      --ff-header: 'Erbaum', sans-serif;
+      --ff-body: 'Afacad', sans-serif;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top left, #034b61 0%, #022b3a 40%, #011218 100%);
-      font-family: var(--ff-body, Arial, sans-serif);
-      color: #fff;
+      background-color: var(--frosted-mist);
+      font-family: var(--ff-body);
+      color: var(--midnight-summit);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding-top: 100px; /* Space for the floating logo */
     }
 
-    /* --- Floating Logo & Logout --- */
-    .bg-logo {
-      position: absolute;
-      top: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px; 
-      height: auto;
-      z-index: 10;
+    /* --- New Branded Sticky Header --- */
+    .main-header {
+      background-color: var(--midnight-summit);
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 44, 57, 0.15); /* Soft shadow bleeding onto the light background */
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-logo {
+      height: 40px;
+      width: auto;
     }
 
     .logout-btn {
-      position: absolute;
-      top: 2.5rem;
-      right: 2.5rem;
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--frosted-mist);
       text-decoration: none;
+      font-family: var(--ff-header);
       font-size: 0.85rem;
       font-weight: bold;
-      padding: 0.5rem 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      transition: all 0.2s ease;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid rgba(255, 247, 247, 0.3); /* Subtle light border */
+      border-radius: 50px;
+      transition: all 0.3s ease;
     }
 
     .logout-btn:hover {
-      color: #d9534f;
-      border-color: #d9534f;
-      background: rgba(217, 83, 79, 0.1);
+      background-color: var(--aurora-green);
+      color: var(--midnight-summit);
+      border-color: var(--aurora-green);
+      box-shadow: 0 4px 15px rgba(0, 193, 142, 0.3);
     }
 
-    /* --- Dashboard Container --- */
-    .dashboard-container {
-      background: #ffffff;
+    /* --- Main Content Area --- */
+    .content-wrapper {
+      padding: 2.5rem 5% 4rem 5%;
+      max-width: 1000px;
+      margin: 0 auto;
       width: 100%;
-      max-width: 800px;
-      border-radius: 8px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-      padding: 3rem;
-      color: #333;
-      margin-bottom: 3rem;
+      box-sizing: border-box;
+      flex: 1;
     }
 
     .greeting {
       margin-top: 0;
-      font-family: var(--ff-header, Arial, sans-serif);
-      color: #011f2a;
-      font-size: 2rem;
+      font-family: var(--ff-header);
+      color: var(--midnight-summit);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: normal;
+      letter-spacing: 0.02em;
     }
 
-    /* --- Progress Bar --- */
+    .subtitle {
+      color: var(--arcana-deep);
+      font-size: 1.15rem;
+      margin-bottom: 3rem;
+      opacity: 0.85;
+    }
+
+    /* --- Progress Tracker --- */
     .progress-section {
-      margin: 2rem 0;
+      margin-bottom: 3.5rem;
     }
 
     .progress-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.85rem;
       font-weight: bold;
-      color: #555;
+      font-family: var(--ff-header);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--arcana-deep);
+      font-size: 0.95rem;
     }
 
     .progress-track {
       width: 100%;
-      height: 12px;
-      background: #e0e0e0;
-      border-radius: 10px;
+      height: 14px;
+      background: rgba(1, 80, 97, 0.1); 
+      border-radius: 20px;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      background: #00d59f;
-      width: 0%; /* Will be updated via JS */
-      transition: width 0.5s ease-in-out;
+      background: var(--aurora-green);
+      width: 0%; 
+      transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* --- Accordion Modules --- */
+    /* --- Edge-to-Edge Accordions --- */
     .module-accordion {
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 1rem;
+      background: #ffffff;
+      border: 1px solid rgba(1, 80, 97, 0.15);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 44, 57, 0.03); 
     }
 
     .accordion-header {
-      background: #f9f9f9;
-      padding: 1rem 1.5rem;
+      padding: 1.5rem 2rem;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: bold;
-      color: #011f2a;
+      font-family: var(--ff-header);
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+      color: var(--midnight-summit);
       transition: background 0.2s ease;
     }
 
     .accordion-header:hover {
-      background: #f1f1f1;
+      background: rgba(1, 80, 97, 0.03);
     }
 
     .accordion-content {
-      display: none; /* Hidden by default */
-      background: #fff;
-      border-top: 1px solid #ccc;
+      display: none; 
+      background: #ffffff;
       padding: 0;
     }
 
@@ -134,57 +176,67 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid #eee;
+      padding: 1.25rem 2rem;
+      border-top: 1px solid rgba(1, 80, 97, 0.1);
       text-decoration: none;
-      color: #333;
-      transition: background 0.2s ease;
-    }
-
-    .lesson-item:last-child {
-      border-bottom: none;
+      color: var(--midnight-summit);
+      font-size: 1.05rem;
+      transition: all 0.2s ease;
     }
 
     .lesson-item:hover {
-      background: #f4fcf9;
+      background: rgba(0, 193, 142, 0.05); 
     }
 
     /* Lesson States */
     .lesson-item.completed .status {
-      color: #00d59f;
+      color: var(--aurora-green);
       font-weight: bold;
     }
     
     .lesson-item.locked {
       opacity: 0.5;
-      pointer-events: none; /* Prevents clicking */
-      background: #fafafa;
+      pointer-events: none; 
+      background: var(--frosted-mist);
     }
     
     .lesson-item.locked .status {
-      color: #999;
+      color: var(--arcana-deep);
     }
 
     .lesson-item.active {
-      border-left: 4px solid #00d59f;
-      background: #f4fcf9;
+      border-left: 6px solid var(--aurora-green);
+      background: rgba(0, 193, 142, 0.05);
     }
 
+    .lesson-item.active .status {
+      color: var(--arcana-deep);
+      font-weight: bold;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .greeting { font-size: 2rem; }
+      .accordion-header { padding: 1.25rem 1.5rem; font-size: 1rem; }
+      .lesson-item { padding: 1rem 1.5rem; font-size: 0.95rem; }
+      .header-content { padding: 1rem 5%; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Assets -->
-  <img src="ALPS_Logo-04.png" alt="ALPS Logo" class="bg-logo">
-  <a href="intern-login.html" class="logout-btn" onclick="logout()">Log Out</a>
+  <header class="main-header">
+    <div class="header-content">
+      <img src="ALPS_Logo-04.png" alt="ALPS Logo" class="nav-logo">
+      <a href="intern-login.html" class="logout-btn" onclick="logout()">Log Out</a>
+    </div>
+  </header>
 
-  <div class="dashboard-container">
+  <main class="content-wrapper">
     
-    <!-- Dynamic Greeting -->
     <h1 class="greeting">Hello, <span id="intern-name">Intern</span></h1>
-    <p>Welcome to your training dashboard. Pick up right where you left off.</p>
+    <p class="subtitle">Welcome to your training dashboard. Pick up right where you left off.</p>
 
-    <!-- Progress Tracker -->
     <div class="progress-section">
       <div class="progress-header">
         <span>Course Completion</span>
@@ -195,48 +247,93 @@
       </div>
     </div>
 
-    <!-- Chapter 1 Accordion -->
     <div class="module-accordion">
       <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span>Chapter 1: Introduction to Workflows</span>
+        <span>Chapter 1: Foundations of Gamified Learning</span>
         <span class="icon">▼</span>
       </div>
       <div class="accordion-content">
-        <!-- Lesson 1 (Completed State Example) -->
-        <a href="course-player.html?lesson=chap1-les1" class="lesson-item completed">
-          <span>Lesson 1: Arcana Basics</span>
+        <a href="course-player.html?lesson=chap1-les1" class="lesson-item completed" id="chap1-les1">
+          <span>Lesson 1: What is Gamification</span>
           <span class="status">✓ Completed</span>
         </a>
-        <!-- Lesson 2 (Active State Example) -->
-        <a href="course-player.html?lesson=chap1-les2" class="lesson-item active">
-          <span>Lesson 2: Tool Integrations</span>
+        <a href="course-player.html?lesson=chap1-les2" class="lesson-item active" id="chap1-les2">
+          <span>Lesson 2: Why Gamification Works</span>
           <span class="status">Resume ➔</span>
         </a>
-        <!-- Lesson 3 (Locked State Example) -->
-        <a href="course-player.html?lesson=chap1-les3" class="lesson-item locked">
-          <span>Lesson 3: Final Assessments</span>
+        <a href="course-player.html?lesson=chap1-les3" class="lesson-item locked" id="chap1-les3">
+          <span>Lesson 3: Trends in Learning Design</span>
           <span class="status">🔒 Locked</span>
         </a>
       </div>
     </div>
 
-    <!-- Chapter 2 Accordion -->
     <div class="module-accordion">
       <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span>Chapter 2: Advanced Authoring</span>
+        <span>Chapter 2: Instructional Design Frameworks</span>
         <span class="icon">▼</span>
       </div>
       <div class="accordion-content">
-        <a href="#" class="lesson-item locked"><span>Lesson 1: HTML5 Exports</span><span class="status">🔒 Locked</span></a>
-        <a href="#" class="lesson-item locked"><span>Lesson 2: Tracking Variables</span><span class="status">🔒 Locked</span></a>
-        <a href="#" class="lesson-item locked"><span>Lesson 3: Chapter 2 Quiz</span><span class="status">🔒 Locked</span></a>
+        <a href="course-player.html?lesson=chap2-les1" class="lesson-item locked" id="chap2-les1">
+          <span>Lesson 1: What is Instructional Design</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap2-les2" class="lesson-item locked" id="chap2-les2">
+          <span>Lesson 2: Instructional Design Frameworks</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap2-les3" class="lesson-item locked" id="chap2-les3">
+          <span>Lesson 3: Integrated Design Blueprint</span>
+          <span class="status">🔒 Locked</span>
+        </a>
       </div>
     </div>
 
-  </div>
+    <div class="module-accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Chapter 3: Building Gamified Learning in Rise360</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <a href="course-player.html?lesson=chap3-les1" class="lesson-item locked" id="chap3-les1">
+          <span>Lesson 1: Introduction to Articulate Rise 360</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap3-les2" class="lesson-item locked" id="chap3-les2">
+          <span>Lesson 2: Structuring a Gamified Lesson</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap3-les3" class="lesson-item locked" id="chap3-les3">
+          <span>Lesson 3: Creating Interactive Activities</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="module-accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Chapter 4: Code Blocks and Deployment</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <a href="course-player.html?lesson=chap4-les1" class="lesson-item locked" id="chap4-les1">
+          <span>Lesson 1: HTML, CSS, and JavaScript Basics</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap4-les2" class="lesson-item locked" id="chap4-les2">
+          <span>Lesson 2: Using Code Blocks in Rise360</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+        <a href="course-player.html?lesson=chap4-les3" class="lesson-item locked" id="chap4-les3">
+          <span>Lesson 3: Capstone: Build and Deploy a Gamified Lesson</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
 
   <script>
-    // Dictionary mapping IDs to Names
     const internDirectory = {
       "2026-010": "JOSHUA RODWIN S. CRUZ",
       "2026-011": "CHARLIE MARGARET A. BALAGTAS",
@@ -250,42 +347,87 @@
       "2026-019": "JOHRIN ASHLEIGH SP. CHAN",
       "2026-020": "KIRBY BENJ D. GUTIERREZ",
       "2026-021": "ALLEN WILSON D. TUAZON",
-      "6767-666": "PEEPEEPOOPOO J. TRUMP"
+      "6767-666": "PEEPEEPOOPOO J. TRUMP",
+      "6969-696": "PLAYBOI CARTI D. GOAT",
+      "0000-000": "KANYE WEST"
     };
 
-    // 1. Check Login and Set Name
     window.onload = function() {
-      const activeInternID = localStorage.getItem('arcana_active_intern');
-      
-      // If no ID is found, kick them back to login
-      if (!activeInternID) {
+    const activeInternID = localStorage.getItem('arcana_active_intern');
+    
+    if (!activeInternID) {
         window.location.href = 'intern-login.html';
         return;
-      }
-
-      // Grab the full name, split by space, and use the first name (capitalized nicely)
-      if (internDirectory[activeInternID]) {
-        const fullName = internDirectory[activeInternID];
-        const firstName = fullName.split(' ')[0]; 
-        
-        // Convert "JOSHUA" to "Joshua"
-        const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-        
-        document.getElementById('intern-name').innerText = formattedName;
-      }
-
-      // Mocking the progress update for now (e.g., 1 out of 12 lessons complete)
-      updateProgress(1, 12);
-    };
-
-    // 2. Progress Bar Logic
-    function updateProgress(completedLessons, totalLessons) {
-      const percentage = Math.round((completedLessons / totalLessons) * 100);
-      document.getElementById('progress-bar').style.width = percentage + '%';
-      document.getElementById('progress-text').innerText = percentage + '%';
     }
 
-    // 3. Accordion Toggle Logic
+    // 1. ORIGINAL NAME LOGIC (Runs immediately so the page isn't blank)
+    if (internDirectory[activeInternID]) {
+        const fullName = internDirectory[activeInternID];
+        const firstName = fullName.split(' ')[0]; 
+        const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+        document.getElementById('intern-name').innerText = formattedName;
+    }
+
+    // 2. SYNC LOGIC (Now correctly integrated)
+    fetch(`/.netlify/functions/get-progress?id=${activeInternID}`)
+        .then(res => res.json())
+        .then(data => {
+        // If we find progress in the cloud, we use it
+        if (data.completedCount !== undefined) {
+            localStorage.setItem('alps_progress_sped', data.completedCount);
+            updateDashboardUI(data.completedCount);
+        } else {
+            // If the cloud is empty, fallback to whatever is on this device
+            const localProgress = parseInt(localStorage.getItem('alps_progress_sped') || "0", 10);
+            updateDashboardUI(localProgress);
+        }
+        })
+        .catch(err => {
+        console.error("Sync failed, using local data instead.", err);
+        // Fallback to local data if the internet/Netlify is acting up
+        const localProgress = parseInt(localStorage.getItem('alps_progress_sped') || "0", 10);
+        updateDashboardUI(localProgress);
+        });
+    };
+
+    function updateDashboardUI(completedCount) {
+      // Grab every lesson item in the HTML in order
+      const lessons = document.querySelectorAll('.lesson-item');
+      const totalLessons = lessons.length;
+
+      lessons.forEach((lesson, index) => {
+        // Clear hardcoded classes so JS can take over
+        lesson.className = 'lesson-item';
+        const statusSpan = lesson.querySelector('.status');
+
+        if (index < completedCount) {
+          // LESSONS ALREADY DONE
+          lesson.classList.add('completed');
+          statusSpan.innerText = '✓ Completed';
+          lesson.href = 'course-player.html'; 
+          
+        } else if (index === completedCount) {
+          // THE NEXT UNLOCKED LESSON
+          lesson.classList.add('active');
+          statusSpan.innerText = 'Resume ➔';
+          lesson.href = 'course-player.html';
+          
+        } else {
+          // FUTURE LOCKED LESSONS
+          lesson.classList.add('locked');
+          statusSpan.innerText = '🔒 Locked';
+          lesson.removeAttribute('href'); // Removes the link so they can't click it
+        }
+      });
+
+      // 4. Update the Progress Bar
+      const percentage = totalLessons === 0 ? 0 : Math.round((completedCount / totalLessons) * 100);
+      setTimeout(() => {
+        document.getElementById('progress-bar').style.width = percentage + '%';
+        document.getElementById('progress-text').innerText = percentage + '%';
+      }, 300);
+    }
+
     function toggleAccordion(headerElement) {
       const content = headerElement.nextElementSibling;
       const icon = headerElement.querySelector('.icon');
@@ -299,9 +441,10 @@
       }
     }
 
-    // 4. Logout Logic
     function logout() {
       localStorage.removeItem('arcana_active_intern');
+      // Optional: You could wipe progress on logout, but usually you want to keep it.
+      // localStorage.removeItem('alps_progress_sped'); 
     }
   </script>
 </body>
