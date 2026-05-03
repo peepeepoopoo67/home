@@ -269,8 +269,10 @@ function updateProgressBar() {
 /* ============================================================
    THE BRIDGE: Listening for Rise 360 Completion & Sheets Sync
    ============================================================ */
+/* ============================================================
+   THE BRIDGE: Listening for Rise 360 Completion & Sheets Sync
+   ============================================================ */
 function setupBridgeListener(storageKey) {
-    // 1. Intern Directory for Name Lookup (Mirroring the Hub)
     const internDirectory = {
         "2026-010": "JOSHUA RODWIN S. CRUZ",
         "2026-011": "CHARLIE MARGARET A. BALAGTAS",
@@ -288,35 +290,22 @@ function setupBridgeListener(storageKey) {
     };
 
     window.addEventListener('message', (event) => {
-        
-        // Listen for the standard 'complete' signal
+        // Listen for the 'complete' signal from the ID Team's code block
         if (event.data && event.data.type === 'complete') {
             
-            // Check if the final time key exists in local storage
-            const finalTimeStr = localStorage.getItem('alps_lesson_final_time');
+            // The ID Team's code stores the formatted time (e.g., "01:20") in this key
+            const durationString = localStorage.getItem('alps_lesson_final_time');
             
-            if (finalTimeStr) {
-                // --- DURATION CALCULATION ---
-                const startTimeStr = localStorage.getItem('alps_lesson_start');
-                const startTime = startTimeStr ? parseInt(startTimeStr, 10) : 0;
-                const finalTime = parseInt(finalTimeStr, 10);
+            // If the key exists, this is the REAL finish button
+            if (durationString) {
                 
-                let formattedDuration = "Unknown";
-                if (startTime > 0 && finalTime > startTime) {
-                    const durationSeconds = Math.round((finalTime - startTime) / 1000);
-                    const minutes = Math.floor(durationSeconds / 60);
-                    const seconds = durationSeconds % 60;
-                    formattedDuration = `${minutes}m ${seconds}s`;
-                }
-
-                // Clean up storage so it doesn't falsely trigger the next lesson
+                // Clean up the key immediately so it doesn't trigger the next lesson
                 localStorage.removeItem('alps_lesson_final_time');
-                localStorage.removeItem('alps_lesson_start'); 
 
                 // Ensure they are completing the highest unlocked lesson
                 if (activeLessonIndex === completedCount) {
                     
-                    // Increment and save progress visually
+                    // 1. Increment progress visually and update Sidebar
                     completedCount++;
                     localStorage.setItem(storageKey, completedCount);
                     renderSidebar(COURSES[currentCourseKey]);
@@ -327,40 +316,34 @@ function setupBridgeListener(storageKey) {
                         if (badge) badge.textContent = "Course Complete";
                     }
 
-                    // --- GOOGLE SHEETS / NETLIFY SYNC LOGIC ---
+                    // 2. Prep data for Google Sheets
                     const internID = localStorage.getItem('arcana_active_intern') || "Unknown ID";
                     const internName = internDirectory[internID] || "Unknown Intern";
                     const lessonTitle = flatLessons[activeLessonIndex].title;
 
+                    // Payload mapped exactly to your Google Apps Script
                     const payload = {
-                        internName: internName,
                         internID: internID,
-                        lesson: lessonTitle,
-                        duration: formattedDuration
+                        fullName: internName,
+                        lessonID: lessonTitle,
+                        duration: durationString, // We pass the ID team's "01:20" string directly!
+                        status: "Completed"
                     };
 
-                    console.log("Sending progress to Netlify Function:", payload);
+                    console.log("Sending payload to Netlify:", payload);
 
-                    // Send the data to your Netlify serverless function
+                    // 3. Send the data to Netlify
                     fetch('/.netlify/functions/save-progress', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Network response was not ok");
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Successfully logged to Google Sheets!", data);
-                    })
-                    .catch(error => {
-                        console.error("Failed to sync progress to Google Sheets:", error);
-                    });
+                    .then(response => response.json())
+                    .then(data => console.log("Google Sheets Sync Success!", data))
+                    .catch(error => console.error("Google Sheets Sync Failed:", error));
                 }
             } else {
+                // If there's no duration string, it was an intermediate block. Ignore it.
                 console.log("Intermediate code block finished. Portal waiting for final block.");
             }
         }
