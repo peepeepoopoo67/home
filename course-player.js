@@ -272,6 +272,9 @@ function updateProgressBar() {
 /* ============================================================
    THE BRIDGE: Listening for Rise 360 Completion & Sheets Sync
    ============================================================ */
+/* ============================================================
+   THE BRIDGE: Listening for Rise 360 Completion & Sheets Sync
+   ============================================================ */
 function setupBridgeListener(storageKey) {
     const internDirectory = {
         "2026-010": "JOSHUA RODWIN S. CRUZ",
@@ -286,65 +289,72 @@ function setupBridgeListener(storageKey) {
         "2026-019": "JOHRIN ASHLEIGH SP. CHAN",
         "2026-020": "KIRBY BENJ D. GUTIERREZ",
         "2026-021": "ALLEN WILSON D. TUAZON",
-        "6767-666": "PEEPEEPOOPOO J. TRUMP"
+        "6767-666": "PEEPEEPOOPOO J. TRUMP",
+        "6969-696": "PLAYBOI CARTI D. GOAT",
+      "0000-000": "KANYE WEST"
     };
 
     window.addEventListener('message', (event) => {
-        // Listen for the 'complete' signal from the ID Team's code block
+        // Tracker 1: Catching EVERYTHING the iframe shouts
+        console.log("👉 [BRIDGE] Message received from iframe:", event.data);
+
         if (event.data && event.data.type === 'complete') {
+            console.log("👉 [BRIDGE] 'complete' signal officially detected!");
             
-            // The ID Team's code stores the formatted time (e.g., "01:20") in this key
-            const durationString = localStorage.getItem('alps_lesson_final_time');
-            
-            // If the key exists, this is the REAL finish button
-            if (durationString) {
+            try {
+                // Tracker 2: Checking the Secret Handshake
+                const durationString = localStorage.getItem('alps_lesson_final_time');
+                console.log("👉 [BRIDGE] Checked LocalStorage for time. Result:", durationString);
                 
-                // Clean up the key immediately so it doesn't trigger the next lesson
-                localStorage.removeItem('alps_lesson_final_time');
-
-                // Ensure they are completing the highest unlocked lesson
-                if (activeLessonIndex === completedCount) {
+                if (durationString) {
+                    console.log(`👉 [BRIDGE] Handshake Verified! Active Index: ${activeLessonIndex} | Completed Count: ${completedCount}`);
                     
-                    // 1. Increment progress visually and update Sidebar
-                    completedCount++;
-                    localStorage.setItem(storageKey, completedCount);
-                    renderSidebar(COURSES[currentCourseKey]);
-                    updateProgressBar();
+                    localStorage.removeItem('alps_lesson_final_time');
 
-                    if (completedCount >= totalLessons) {
-                        const badge = document.getElementById("course-status-badge");
-                        if (badge) badge.textContent = "Course Complete";
+                    if (activeLessonIndex === completedCount) {
+                        console.log("👉 [BRIDGE] Index matched. Unlocking sidebar now...");
+                        
+                        completedCount++;
+                        localStorage.setItem(storageKey, completedCount);
+                        renderSidebar(COURSES[currentCourseKey]);
+                        updateProgressBar();
+
+                        if (completedCount >= totalLessons) {
+                            const badge = document.getElementById("course-status-badge");
+                            if (badge) badge.textContent = "Course Complete";
+                        }
+
+                        const internID = localStorage.getItem('arcana_active_intern') || "Unknown ID";
+                        const internName = internDirectory[internID] || "Unknown Intern";
+                        const lessonTitle = flatLessons[activeLessonIndex].title;
+
+                        const payload = {
+                            internID: internID,
+                            fullName: internName,
+                            lessonID: lessonTitle,
+                            duration: durationString,
+                            status: "Completed"
+                        };
+
+                        console.log("👉 [BRIDGE] Preparing to send payload to Netlify:", payload);
+
+                        fetch('/.netlify/functions/save-progress', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log("👉 [BRIDGE] GOOGLE SHEETS SUCCESS:", data))
+                        .catch(error => console.error("👉 [BRIDGE] GOOGLE SHEETS FAILED:", error));
+                        
+                    } else {
+                        console.log("👉 [BRIDGE] Ignored: Lesson already completed or index mismatch.");
                     }
-
-                    // 2. Prep data for Google Sheets
-                    const internID = localStorage.getItem('arcana_active_intern') || "Unknown ID";
-                    const internName = internDirectory[internID] || "Unknown Intern";
-                    const lessonTitle = flatLessons[activeLessonIndex].title;
-
-                    // Payload mapped exactly to your Google Apps Script
-                    const payload = {
-                        internID: internID,
-                        fullName: internName,
-                        lessonID: lessonTitle,
-                        duration: durationString, // We pass the ID team's "01:20" string directly!
-                        status: "Completed"
-                    };
-
-                    console.log("Sending payload to Netlify:", payload);
-
-                    // 3. Send the data to Netlify
-                    fetch('/.netlify/functions/save-progress', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(response => response.json())
-                    .then(data => console.log("Google Sheets Sync Success!", data))
-                    .catch(error => console.error("Google Sheets Sync Failed:", error));
+                } else {
+                    console.error("👉 [BRIDGE] ERROR: LocalStorage is empty. The 'Secret Handshake' failed.");
                 }
-            } else {
-                // If there's no duration string, it was an intermediate block. Ignore it.
-                console.log("Intermediate code block finished. Portal waiting for final block.");
+            } catch (err) {
+                console.error("👉 [BRIDGE] CRITICAL JS ERROR in listener:", err);
             }
         }
     });
