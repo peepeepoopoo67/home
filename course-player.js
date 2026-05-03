@@ -343,29 +343,29 @@ function setupBridgeListener(storageKey) {
                 .then(data => console.log("👉 [BYPASS] GOOGLE SHEETS SUCCESS:", data))
                 .catch(error => console.error("👉 [BYPASS] GOOGLE SHEETS FAILED:", error));
                 
-                // --- NEW: TRIGGER POP-UP MODAL ---
-                const modal = document.getElementById('completion-modal');
-                const nextBtn = document.getElementById('modal-next-btn');
-                const closeBtn = document.getElementById('modal-close-btn');
+             // --- NEW: TRIGGER SUBTLE TOAST ---
+                const toast = document.getElementById('completion-toast');
+                const nextBtn = document.getElementById('toast-next-btn');
+                const closeBtn = document.getElementById('toast-close-btn');
 
-                if (modal) {
-                    modal.style.display = 'flex'; 
+                if (toast) {
+                    toast.style.display = 'flex'; 
 
                     // If it's the very last lesson in the course
                     if (completedCount >= totalLessons) {
-                        nextBtn.textContent = "Return to Dashboard";
+                        nextBtn.textContent = "To Dashboard ➔";
                         nextBtn.onclick = () => window.location.href = "intern-hub.html";
                     } else {
-                        // Normal progression: button clicks them to the next lesson
+                        // Normal progression: clicks to the next lesson
                         nextBtn.onclick = () => {
-                            modal.style.display = 'none';
+                            toast.style.display = 'none';
                             loadLesson(activeLessonIndex + 1); 
                         };
                     }
 
-                    // Just close the modal if they want to sit on the current screen
+                    // Dismiss just hides the toast so they can read
                     closeBtn.onclick = () => {
-                        modal.style.display = 'none';
+                        toast.style.display = 'none';
                     };
                 }
             }

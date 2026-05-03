@@ -87,18 +87,18 @@
                     <p>You must complete the previous lessons before accessing this module. Finish the current lesson to proceed.</p>
                 </div>
             </div>
-          <div class="player-completion-modal" id="completion-modal" style="display: none;">
-                <div class="completion-modal-inner">
-                    <div class="modal-icon-wrap">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                    </div>
-                    <h2>Module Completed</h2>
-                    <p>Excellent work. Your progress has been securely synced to your dashboard.</p>
-                    <button id="modal-next-btn" class="modal-btn">Proceed to Next Module</button>
-                    <button id="modal-close-btn" class="modal-close-btn">Close</button>
+            <div class="completion-toast" id="completion-toast" style="display: none;">
+                <div class="toast-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#00C18E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <h3>Progress Synced</h3>
+                </div>
+                <p>Lesson complete. Feel free to review the content above, or proceed when ready.</p>
+                <div class="toast-actions">
+                    <button id="toast-close-btn" class="toast-btn-secondary">Dismiss</button>
+                    <button id="toast-next-btn" class="toast-btn-primary">Next Lesson ➔</button>
                 </div>
             </div>
         </main>
