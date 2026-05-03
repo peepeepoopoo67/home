@@ -87,7 +87,20 @@
                     <p>You must complete the previous lessons before accessing this module. Finish the current lesson to proceed.</p>
                 </div>
             </div>
-
+          <div class="player-completion-modal" id="completion-modal" style="display: none;">
+                <div class="completion-modal-inner">
+                    <div class="modal-icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h2>Module Completed</h2>
+                    <p>Excellent work. Your progress has been securely synced to your dashboard.</p>
+                    <button id="modal-next-btn" class="modal-btn">Proceed to Next Module</button>
+                    <button id="modal-close-btn" class="modal-close-btn">Close</button>
+                </div>
+            </div>
         </main>
 
     </div>

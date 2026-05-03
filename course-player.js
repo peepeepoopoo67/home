@@ -278,6 +278,9 @@ function updateProgressBar() {
 /* ============================================================
    THE BYPASS: Memory Watcher & Sheets Sync
    ============================================================ */
+/* ============================================================
+   THE BYPASS: Memory Watcher, Sheets Sync & Modal Pop-Up
+   ============================================================ */
 function setupBridgeListener(storageKey) {
     const internDirectory = {
         "2026-010": "JOSHUA RODWIN S. CRUZ",
@@ -297,19 +300,14 @@ function setupBridgeListener(storageKey) {
         "0000-000": "KANYE WEST"
     };
 
-    // We completely ignore postMessage because Rise is trapping it.
-    // Instead, we check the shared browser memory every 1 second.
     setInterval(() => {
-        // Look for the string the ID team saved (e.g., "01:09")
         const durationString = localStorage.getItem('alps_lesson_final_time');
         
         if (durationString) {
             console.log("👉 [BYPASS] Found the final time in memory! Lesson is complete:", durationString);
             
-            // 1. DELETE IT IMMEDIATELY so this doesn't run 1,000 times
             localStorage.removeItem('alps_lesson_final_time');
 
-            // 2. UNLOCK THE LESSON
             if (activeLessonIndex === completedCount) {
                 console.log("👉 [BYPASS] Unlocking sidebar now...");
                 
@@ -323,7 +321,7 @@ function setupBridgeListener(storageKey) {
                     if (badge) badge.textContent = "Course Complete";
                 }
 
-                // 3. GOOGLE SHEETS SYNC
+                // GOOGLE SHEETS SYNC
                 const internID = localStorage.getItem('arcana_active_intern') || "Unknown ID";
                 const internName = internDirectory[internID] || "Unknown Intern";
                 const lessonTitle = flatLessons[activeLessonIndex].title;
@@ -336,8 +334,6 @@ function setupBridgeListener(storageKey) {
                     status: "Completed"
                 };
 
-                console.log("👉 [BYPASS] Sending payload to Netlify:", payload);
-
                 fetch('/.netlify/functions/save-progress', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -347,9 +343,34 @@ function setupBridgeListener(storageKey) {
                 .then(data => console.log("👉 [BYPASS] GOOGLE SHEETS SUCCESS:", data))
                 .catch(error => console.error("👉 [BYPASS] GOOGLE SHEETS FAILED:", error));
                 
+                // --- NEW: TRIGGER POP-UP MODAL ---
+                const modal = document.getElementById('completion-modal');
+                const nextBtn = document.getElementById('modal-next-btn');
+                const closeBtn = document.getElementById('modal-close-btn');
+
+                if (modal) {
+                    modal.style.display = 'flex'; 
+
+                    // If it's the very last lesson in the course
+                    if (completedCount >= totalLessons) {
+                        nextBtn.textContent = "Return to Dashboard";
+                        nextBtn.onclick = () => window.location.href = "intern-hub.html";
+                    } else {
+                        // Normal progression: button clicks them to the next lesson
+                        nextBtn.onclick = () => {
+                            modal.style.display = 'none';
+                            loadLesson(activeLessonIndex + 1); 
+                        };
+                    }
+
+                    // Just close the modal if they want to sit on the current screen
+                    closeBtn.onclick = () => {
+                        modal.style.display = 'none';
+                    };
+                }
             }
         }
-    }, 1000); // Runs every 1000ms (1 second)
+    }, 1000); 
 }
 
 /* ============================================================
