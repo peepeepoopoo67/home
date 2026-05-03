@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intern Portal Login | Arcana Learning</title>
+
+  <style>
+    /* --- Page Specific Background & Typography --- */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top left, #034b61 0%, #022b3a 40%, #011218 100%);
+      font-family: Arial, sans-serif;
+      position: relative; /* Allows logo and button to float */
+    }
+
+    /* --- Floating Logo (Embedded in Background) --- */
+    .bg-logo {
+      position: absolute;
+      top: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px; /* Locked to your exact preferred size */
+      height: auto;
+      z-index: 10;
+    }
+
+    /* --- Expandable Hover Back Button (Floating Top Left) --- */
+    .expandable-back-btn {
+      position: absolute;
+      top: 2.5rem;
+      left: 2.5rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.5rem;
+      border-radius: 50px; 
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 1010; 
+    }
+
+    .expandable-back-btn .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+    }
+
+    .expandable-back-btn .text {
+      max-width: 0;
+      opacity: 0;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .expandable-back-btn:hover {
+      color: #00d59f;
+      background: rgba(0, 213, 159, 0.1);
+      box-shadow: 0 0 10px rgba(0, 213, 159, 0.2);
+    }
+
+    .expandable-back-btn:hover .text {
+      max-width: 150px;
+      opacity: 1;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
+    /* --- Login Container --- */
+    .portal-container {
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 8px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      max-width: 400px;
+      width: 90%; 
+      z-index: 20;
+      margin-top: 4rem; /* Keeps it visually balanced below the logo */
+    }
+
+    .portal-container h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .input-group {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .portal-input {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .portal-input:focus {
+      outline: none;
+      border-color: #00d59f;
+    }
+
+    #access-btn {
+      background-color: #00d59f; 
+      color: #011f2a; 
+      font-weight: bold;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    #access-btn:hover {
+      background-color: #00b386;
+      box-shadow: 0 4px 12px rgba(0, 213, 159, 0.3);
+    }
+
+    .error-text {
+      color: #d9534f;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      font-weight: bold;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .expandable-back-btn { top: 1.5rem; left: 1rem; }
+      .expandable-back-btn:hover .text { display: none; } 
+      .bg-logo { top: 1.5rem; width: 200px; } /* Scales down slightly so it doesn't crowd small screens */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Elements (No Header Wrapper) -->
+  <a href="index.html" class="expandable-back-btn">
+    <span class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    </span>
+    <span class="text">Return to Main Site</span>
+  </a>
+
+  <img src="ALPS_Logo-04.png" alt="ALPS Logo" class="bg-logo">
+
+  <!-- Main Login Card -->
+  <div class="portal-container">
+    <h2>Intern Training Portal</h2>
+    <p style="color: #555; font-size: 0.9rem;">Enter your assigned ID and PIN to access modules.</p>
+    
+    <div class="input-group">
+      <input type="text" id="intern-id-input" class="portal-input" placeholder="Intern ID (e.g., 2026-010)" autocomplete="off">
+      <input type="password" id="intern-pass-input" class="portal-input" placeholder="4-Digit PIN" autocomplete="off" maxlength="4">
+      <button id="access-btn" onclick="validateIntern()">Secure Login</button>
+    </div>
+    
+    <p id="error-message" class="error-text" style="display: none;">Invalid ID or PIN. Please try again.</p>
+  </div>
+
+  <script>
+    const internCredentials = {
+      "2026-010": "1281",
+      "2026-011": "1483",
+      "2026-012": "1104",
+      "2026-013": "1238",
+      "2026-014": "4625",
+      "2026-015": "9696",
+      "2026-016": "7376",
+      "2026-017": "6840",
+      "2026-018": "2158",
+      "2026-019": "2962",
+      "2026-020": "1324",
+      "2026-021": "2753",
+      "6767-666": "6767" // Your test credential
+    };
+
+    function validateIntern() {
+      const idElement = document.getElementById('intern-id-input');
+      const passElement = document.getElementById('intern-pass-input');
+      const errorMessage = document.getElementById('error-message');
+      
+      const enteredID = idElement.value.trim();
+      const enteredPass = passElement.value.trim();
+
+      if (internCredentials.hasOwnProperty(enteredID) && internCredentials[enteredID] === enteredPass) {
+        errorMessage.style.display = 'none';
+        localStorage.setItem('arcana_active_intern', enteredID);
+        
+        // CHANGED: Now redirects to the newly created Hub instead of the course player
+        window.location.href = 'intern-hub.html'; 
+      } else {
+        errorMessage.style.display = 'block';
+      }
+    }
+
+    document.getElementById('intern-id-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') validateIntern();
+    });
+    document.getElementById('intern-pass-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') validateIntern();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intern Dashboard | Arcana Learning</title>
+  
+  <!-- Link to your main stylesheet for fonts -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #034b61 0%, #022b3a 40%, #011218 100%);
+      font-family: var(--ff-body, Arial, sans-serif);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px; /* Space for the floating logo */
+    }
+
+    /* --- Floating Logo & Logout --- */
+    .bg-logo {
+      position: absolute;
+      top: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px; 
+      height: auto;
+      z-index: 10;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 2.5rem;
+      right: 2.5rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      color: #d9534f;
+      border-color: #d9534f;
+      background: rgba(217, 83, 79, 0.1);
+    }
+
+    /* --- Dashboard Container --- */
+    .dashboard-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 800px;
+      border-radius: 8px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+      padding: 3rem;
+      color: #333;
+      margin-bottom: 3rem;
+    }
+
+    .greeting {
+      margin-top: 0;
+      font-family: var(--ff-header, Arial, sans-serif);
+      color: #011f2a;
+      font-size: 2rem;
+    }
+
+    /* --- Progress Bar --- */
+    .progress-section {
+      margin: 2rem 0;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #00d59f;
+      width: 0%; /* Will be updated via JS */
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* --- Accordion Modules --- */
+    .module-accordion {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      background: #f9f9f9;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      color: #011f2a;
+      transition: background 0.2s ease;
+    }
+
+    .accordion-header:hover {
+      background: #f1f1f1;
+    }
+
+    .accordion-content {
+      display: none; /* Hidden by default */
+      background: #fff;
+      border-top: 1px solid #ccc;
+      padding: 0;
+    }
+
+    .lesson-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      text-decoration: none;
+      color: #333;
+      transition: background 0.2s ease;
+    }
+
+    .lesson-item:last-child {
+      border-bottom: none;
+    }
+
+    .lesson-item:hover {
+      background: #f4fcf9;
+    }
+
+    /* Lesson States */
+    .lesson-item.completed .status {
+      color: #00d59f;
+      font-weight: bold;
+    }
+    
+    .lesson-item.locked {
+      opacity: 0.5;
+      pointer-events: none; /* Prevents clicking */
+      background: #fafafa;
+    }
+    
+    .lesson-item.locked .status {
+      color: #999;
+    }
+
+    .lesson-item.active {
+      border-left: 4px solid #00d59f;
+      background: #f4fcf9;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Top Assets -->
+  <img src="ALPS_Logo-04.png" alt="ALPS Logo" class="bg-logo">
+  <a href="intern-login.html" class="logout-btn" onclick="logout()">Log Out</a>
+
+  <div class="dashboard-container">
+    
+    <!-- Dynamic Greeting -->
+    <h1 class="greeting">Hello, <span id="intern-name">Intern</span></h1>
+    <p>Welcome to your training dashboard. Pick up right where you left off.</p>
+
+    <!-- Progress Tracker -->
+    <div class="progress-section">
+      <div class="progress-header">
+        <span>Course Completion</span>
+        <span id="progress-text">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- Chapter 1 Accordion -->
+    <div class="module-accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Chapter 1: Introduction to Workflows</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <!-- Lesson 1 (Completed State Example) -->
+        <a href="course-player.html?lesson=chap1-les1" class="lesson-item completed">
+          <span>Lesson 1: Arcana Basics</span>
+          <span class="status">✓ Completed</span>
+        </a>
+        <!-- Lesson 2 (Active State Example) -->
+        <a href="course-player.html?lesson=chap1-les2" class="lesson-item active">
+          <span>Lesson 2: Tool Integrations</span>
+          <span class="status">Resume ➔</span>
+        </a>
+        <!-- Lesson 3 (Locked State Example) -->
+        <a href="course-player.html?lesson=chap1-les3" class="lesson-item locked">
+          <span>Lesson 3: Final Assessments</span>
+          <span class="status">🔒 Locked</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Chapter 2 Accordion -->
+    <div class="module-accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Chapter 2: Advanced Authoring</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <a href="#" class="lesson-item locked"><span>Lesson 1: HTML5 Exports</span><span class="status">🔒 Locked</span></a>
+        <a href="#" class="lesson-item locked"><span>Lesson 2: Tracking Variables</span><span class="status">🔒 Locked</span></a>
+        <a href="#" class="lesson-item locked"><span>Lesson 3: Chapter 2 Quiz</span><span class="status">🔒 Locked</span></a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Dictionary mapping IDs to Names
+    const internDirectory = {
+      "2026-010": "JOSHUA RODWIN S. CRUZ",
+      "2026-011": "CHARLIE MARGARET A. BALAGTAS",
+      "2026-012": "MIKAYLA R. BAÑADA",
+      "2026-013": "CARL EMMANUEL A. CARSON",
+      "2026-014": "LARAH SUZANNE C. LIBIRAN",
+      "2026-015": "LYWELL B. PALARCA",
+      "2026-016": "TREVOR BASTI G. TORRES",
+      "2026-017": "ALDRIN C. VICTORIA",
+      "2026-018": "JON BERNARD M. CALMA",
+      "2026-019": "JOHRIN ASHLEIGH SP. CHAN",
+      "2026-020": "KIRBY BENJ D. GUTIERREZ",
+      "2026-021": "ALLEN WILSON D. TUAZON",
+      "6767-666": "PEEPEEPOOPOO J. TRUMP"
+    };
+
+    // 1. Check Login and Set Name
+    window.onload = function() {
+      const activeInternID = localStorage.getItem('arcana_active_intern');
+      
+      // If no ID is found, kick them back to login
+      if (!activeInternID) {
+        window.location.href = 'intern-login.html';
+        return;
+      }
+
+      // Grab the full name, split by space, and use the first name (capitalized nicely)
+      if (internDirectory[activeInternID]) {
+        const fullName = internDirectory[activeInternID];
+        const firstName = fullName.split(' ')[0]; 
+        
+        // Convert "JOSHUA" to "Joshua"
+        const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+        
+        document.getElementById('intern-name').innerText = formattedName;
+      }
+
+      // Mocking the progress update for now (e.g., 1 out of 12 lessons complete)
+      updateProgress(1, 12);
+    };
+
+    // 2. Progress Bar Logic
+    function updateProgress(completedLessons, totalLessons) {
+      const percentage = Math.round((completedLessons / totalLessons) * 100);
+      document.getElementById('progress-bar').style.width = percentage + '%';
+      document.getElementById('progress-text').innerText = percentage + '%';
+    }
+
+    // 3. Accordion Toggle Logic
+    function toggleAccordion(headerElement) {
+      const content = headerElement.nextElementSibling;
+      const icon = headerElement.querySelector('.icon');
+
+      if (content.style.display === "block") {
+        content.style.display = "none";
+        icon.innerText = "▼";
+      } else {
+        content.style.display = "block";
+        icon.innerText = "▲";
+      }
+    }
+
+    // 4. Logout Logic
+    function logout() {
+      localStorage.removeItem('arcana_active_intern');
+    }
+  </script>
+</body>
+</html>

@@ -391,3 +391,84 @@ video::-webkit-media-controls-picture-in-picture-button { display: none; }
     .wmu-panel-inner { padding-left: 1.5rem; }
     .wmu-tab { align-items: center; }
 }
+
+/* Internal Utility Bar Styling */
+.internal-utility-bar {
+  /* Matches your deep teal background */
+  background-color: #011f2a; 
+  /* Subtle divider to separate it from the main content */
+  border-top: 1px solid rgba(255, 255, 255, 0.05); 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 0;
+  width: 100%;
+}
+
+.utility-content {
+  /* MATCH THIS TO YOUR MAIN CONTAINER */
+  /* If your main content wrapper is 1200px or 1100px, set this to the exact same value */
+  max-width: 1100px; 
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Match this padding to the left/right padding of your main text/form area */
+  padding: 0 2rem; 
+}
+
+.utility-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.utility-title {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.utility-subtitle {
+  color: #a8c1ca; /* Muted light teal to complement the background */
+  font-size: 0.85rem;
+}
+
+.utility-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  /* Matches the vibrant green of your "SUBMIT INQUIRY" button */
+  color: #00d59f; 
+  border: 1px solid #00d59f;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.utility-btn:hover {
+  background-color: #00d59f;
+  color: #011f2a; /* Reverts to dark text on hover for high contrast */
+  box-shadow: 0 4px 15px rgba(0, 213, 159, 0.3);
+}
+
+.utility-btn .lock-icon {
+  stroke: #00d59f;
+  transition: stroke 0.3s ease;
+}
+
+.utility-btn:hover .lock-icon {
+  stroke: #011f2a; /* Matches the text on hover */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .utility-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
