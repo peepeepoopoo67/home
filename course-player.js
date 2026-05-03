@@ -59,7 +59,7 @@ let activeLessonIndex = -1; // Currently viewing index
 
 function initPlayer() {
     const sidebar = document.getElementById("player-sidebar");
-    if (!sidebar) return; // Halt if not on the player page
+    if (!sidebar) return; 
 
     // 1. Establish Course Context
     const params = new URLSearchParams(window.location.search);
@@ -106,6 +106,11 @@ function initPlayer() {
 
     // 6. Setup iframe Bridge Listener
     setupBridgeListener(storageKey);
+
+    // 7. INITIAL LOAD ONLY (Moved from renderSidebar)
+    // Auto-open highest unlocked lesson when first opening the portal
+    const targetIndex = completedCount < totalLessons ? completedCount : totalLessons - 1;
+    loadLesson(targetIndex);
 }
 
 function renderSidebar(course) {
@@ -174,10 +179,6 @@ function renderSidebar(course) {
 
     updateProgressBar();
     bindSidebarClicks();
-
-    // Auto-open highest unlocked lesson (or latest incomplete)
-    const targetIndex = completedCount < totalLessons ? completedCount : totalLessons - 1;
-    loadLesson(targetIndex);
 }
 
 function bindSidebarClicks() {
@@ -379,33 +380,3 @@ function setupBridgeListener(storageKey) {
 document.addEventListener("DOMContentLoaded", () => {
     initPlayer();
 });
-
-async function markLessonComplete(lessonID) {
-    if (!progressData.completed.includes(lessonID)) {
-        progressData.completed.push(lessonID);
-        localStorage.setItem('alps_progress', JSON.stringify(progressData));
-
-        // Get the duration from the ID's timer
-        const duration = localStorage.getItem('alps_lesson_final_time') || "00:00";
-        const internName = internDirectory[activeInternID] || "Unknown Intern";
-
-        // SHOUT TO THE DATABASE
-        try {
-            await fetch('/.netlify/functions/save-progress', {
-                method: 'POST',
-                body: JSON.stringify({
-                    internId: activeInternID,
-                    name: internName,
-                    lessonId: lessonID,
-                    duration: duration
-                })
-            });
-            console.log("Sheet updated for " + internName);
-        } catch (err) {
-            console.error("Failed to sync with Google Sheets:", err);
-        }
-
-        renderSidebar(); 
-        updateProgressBar();
-    }
-}
